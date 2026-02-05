@@ -23,7 +23,12 @@ if os.getenv("PHOENIX_COLLECTOR_ENDPOINT"):
     )
     LangChainInstrumentor().instrument(tracer_provider=tracer_provider)
 # --- 1. THE JOB SITE (Database) ---
-DB_NAME = "game_site.db" # Local file
+# Check if we are in Docker (volume mounted at /app/data)
+if os.path.isdir("/app/data"):
+    DB_NAME = "/app/data/game_site.db"
+else:
+    DB_NAME = "game_site.db"
+
 def init_game():
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
