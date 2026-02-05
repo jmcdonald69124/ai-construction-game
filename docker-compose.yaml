@@ -1,0 +1,21 @@
+services:
+  phoenix:
+    image: arizephoenix/phoenix
+    ports:
+      - "6006:6006" # The UI
+      - "4317:4317" # The Trace Receiver
+    environment:
+      - PHOENIX_COLLECTOR_OTLP_ENABLED=true
+  game:
+    build: .
+    depends_on:
+      - phoenix
+    environment:
+      - OLLAMA_HOST=http://host.containers.internal:11434
+      - PHOENIX_COLLECTOR_ENDPOINT=http://phoenix:4317
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./game_data:/app/data
+    stdin_open: true 
+    tty: true
